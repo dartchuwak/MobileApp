@@ -23,7 +23,11 @@
 		A3BC9B1E29F1B194001390B3 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = A3BC9B1D29F1B194001390B3 /* SDWebImage */; };
 		A3BC9B2029F1BBBC001390B3 /* PhotoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B1F29F1BBBC001390B3 /* PhotoDetailsView.swift */; };
 		A3BC9B2229F2A1B6001390B3 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B2129F2A1B6001390B3 /* LaunchScreen.swift */; };
-		A3BC9B2529F2B3B4001390B3 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = A3BC9B2429F2B3B4001390B3 /* Reachability */; };
+		A3BC9B2829F2BF10001390B3 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B2729F2BF10001390B3 /* PreviewProvider.swift */; };
+		A3BC9B2A29F30981001390B3 /* PhotoDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B2929F30981001390B3 /* PhotoDetailsViewController.swift */; };
+		A3BC9B2C29F309D0001390B3 /* PhotoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B2B29F309D0001390B3 /* PhotoDetailsViewModel.swift */; };
+		A3BC9B2F29F31213001390B3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A3BC9B2E29F31213001390B3 /* KeychainSwift */; };
+		A3BC9B3529F315B2001390B3 /* PhotoDetailsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9B3429F315B2001390B3 /* PhotoDetailsCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +48,10 @@
 		A3BC9B1A29F15F10001390B3 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		A3BC9B1F29F1BBBC001390B3 /* PhotoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsView.swift; sourceTree = "<group>"; };
 		A3BC9B2129F2A1B6001390B3 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
+		A3BC9B2729F2BF10001390B3 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		A3BC9B2929F30981001390B3 /* PhotoDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsViewController.swift; sourceTree = "<group>"; };
+		A3BC9B2B29F309D0001390B3 /* PhotoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsViewModel.swift; sourceTree = "<group>"; };
+		A3BC9B3429F315B2001390B3 /* PhotoDetailsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3BC9B2F29F31213001390B3 /* KeychainSwift in Frameworks */,
 				A3BC9B1E29F1B194001390B3 /* SDWebImage in Frameworks */,
-				A3BC9B2529F2B3B4001390B3 /* Reachability in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +86,7 @@
 		A3BC9ADA29F06F87001390B3 /* MobileApp */ = {
 			isa = PBXGroup;
 			children = (
+				A3BC9B2629F2BF02001390B3 /* Extensions */,
 				A3BC9B0929F12615001390B3 /* Application */,
 				A3BC9B0D29F12665001390B3 /* Services */,
 				A3BC9B0C29F1265A001390B3 /* ViewModel */,
@@ -103,12 +112,11 @@
 		A3BC9B0A29F1262B001390B3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A3BC9AFF29F078DE001390B3 /* StartViewController.swift */,
-				A3BC9B1229F14428001390B3 /* WebViewUIKit.swift */,
-				A3BC9B1829F15E09001390B3 /* PhotosViewController.swift */,
-				A3BC9B1A29F15F10001390B3 /* PhotoCollectionViewCell.swift */,
+				A3BC9B3329F31434001390B3 /* Launch */,
+				A3BC9B3229F31428001390B3 /* Start */,
+				A3BC9B3129F3141D001390B3 /* Details */,
+				A3BC9B3029F3140A001390B3 /* Main */,
 				A3BC9B1F29F1BBBC001390B3 /* PhotoDetailsView.swift */,
-				A3BC9B2129F2A1B6001390B3 /* LaunchScreen.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -126,6 +134,7 @@
 			children = (
 				A3BC9B0729F124DD001390B3 /* LoginViewModel.swift */,
 				A3BC9AF529F07350001390B3 /* PhotosViewModel.swift */,
+				A3BC9B2B29F309D0001390B3 /* PhotoDetailsViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -136,6 +145,49 @@
 				A3BC9AF729F07372001390B3 /* NetworkManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		A3BC9B2629F2BF02001390B3 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A3BC9B2729F2BF10001390B3 /* PreviewProvider.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A3BC9B3029F3140A001390B3 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				A3BC9B1829F15E09001390B3 /* PhotosViewController.swift */,
+				A3BC9B1A29F15F10001390B3 /* PhotoCollectionViewCell.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		A3BC9B3129F3141D001390B3 /* Details */ = {
+			isa = PBXGroup;
+			children = (
+				A3BC9B2929F30981001390B3 /* PhotoDetailsViewController.swift */,
+				A3BC9B3429F315B2001390B3 /* PhotoDetailsCollectionViewCell.swift */,
+			);
+			path = Details;
+			sourceTree = "<group>";
+		};
+		A3BC9B3229F31428001390B3 /* Start */ = {
+			isa = PBXGroup;
+			children = (
+				A3BC9B1229F14428001390B3 /* WebViewUIKit.swift */,
+				A3BC9AFF29F078DE001390B3 /* StartViewController.swift */,
+			);
+			path = Start;
+			sourceTree = "<group>";
+		};
+		A3BC9B3329F31434001390B3 /* Launch */ = {
+			isa = PBXGroup;
+			children = (
+				A3BC9B2129F2A1B6001390B3 /* LaunchScreen.swift */,
+			);
+			path = Launch;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,7 +208,7 @@
 			name = MobileApp;
 			packageProductDependencies = (
 				A3BC9B1D29F1B194001390B3 /* SDWebImage */,
-				A3BC9B2429F2B3B4001390B3 /* Reachability */,
+				A3BC9B2E29F31213001390B3 /* KeychainSwift */,
 			);
 			productName = MobileApp;
 			productReference = A3BC9AD829F06F87001390B3 /* MobileApp.app */;
@@ -188,7 +240,7 @@
 			mainGroup = A3BC9ACF29F06F87001390B3;
 			packageReferences = (
 				A3BC9B1C29F1B194001390B3 /* XCRemoteSwiftPackageReference "SDWebImage" */,
-				A3BC9B2329F2B3B4001390B3 /* XCRemoteSwiftPackageReference "Reachability" */,
+				A3BC9B2D29F31213001390B3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			productRefGroup = A3BC9AD929F06F87001390B3 /* Products */;
 			projectDirPath = "";
@@ -218,14 +270,18 @@
 			files = (
 				A3BC9B2229F2A1B6001390B3 /* LaunchScreen.swift in Sources */,
 				A3BC9B0829F124DD001390B3 /* LoginViewModel.swift in Sources */,
+				A3BC9B2C29F309D0001390B3 /* PhotoDetailsViewModel.swift in Sources */,
 				A3BC9B1B29F15F10001390B3 /* PhotoCollectionViewCell.swift in Sources */,
+				A3BC9B3529F315B2001390B3 /* PhotoDetailsCollectionViewCell.swift in Sources */,
 				A3BC9ADC29F06F87001390B3 /* AppDelegate.swift in Sources */,
 				A3BC9B1129F12A63001390B3 /* AppDependency.swift in Sources */,
+				A3BC9B2829F2BF10001390B3 /* PreviewProvider.swift in Sources */,
 				A3BC9B1329F14428001390B3 /* WebViewUIKit.swift in Sources */,
 				A3BC9B2029F1BBBC001390B3 /* PhotoDetailsView.swift in Sources */,
 				A3BC9AFA29F0738C001390B3 /* Photos.swift in Sources */,
 				A3BC9B0029F078DE001390B3 /* StartViewController.swift in Sources */,
 				A3BC9AF829F07372001390B3 /* NetworkManager.swift in Sources */,
+				A3BC9B2A29F30981001390B3 /* PhotoDetailsViewController.swift in Sources */,
 				A3BC9B1929F15E09001390B3 /* PhotosViewController.swift in Sources */,
 				A3BC9ADE29F06F87001390B3 /* SceneDelegate.swift in Sources */,
 				A3BC9AF629F07350001390B3 /* PhotosViewModel.swift in Sources */,
@@ -452,12 +508,12 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		A3BC9B2329F2B3B4001390B3 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		A3BC9B2D29F31213001390B3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 20.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -468,10 +524,10 @@
 			package = A3BC9B1C29F1B194001390B3 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
 		};
-		A3BC9B2429F2B3B4001390B3 /* Reachability */ = {
+		A3BC9B2E29F31213001390B3 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A3BC9B2329F2B3B4001390B3 /* XCRemoteSwiftPackageReference "Reachability" */;
-			productName = Reachability;
+			package = A3BC9B2D29F31213001390B3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

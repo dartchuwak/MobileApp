@@ -7,9 +7,7 @@
 
 import Foundation
 import UIKit
-import SwiftUI
 import Combine
-
 
 class PhotosViewController: UIViewController {
     
@@ -30,16 +28,7 @@ class PhotosViewController: UIViewController {
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        viewModel.onInvalidToken = { [weak self] in
-                DispatchQueue.main.async {
-                    let authViewController = WebViewUIKit() // Replace with your actual auth view controller
-                    self?.present(authViewController, animated: true, completion: nil)
-                    self?.navigationController?.popViewController(animated: false)
-                }
-            }
     }
-    
-  
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -49,32 +38,12 @@ class PhotosViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(collectionView)
         view.backgroundColor = .white
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "id")
         collectionView.dataSource = self
         collectionView.delegate = self
         self.title = "MobileApp Gallery"
-        
-        Task {
-            do {
-                await viewModel.testTokenValidity()
-            }
-        }
-        
-        viewModel.$isTokenValid
-            .sink { [weak self] isValid in
-                guard let isValid = isValid else { return }
-                if isValid {
-                    print ("valid")
-                    self?.viewModel.getImages(token: self?.viewModel.token ?? "")
-                } else {
-                    DispatchQueue.main.async {
-                        print("Not valid")
-                        self?.viewModel.onInvalidToken?()
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        
+        viewModel.getImages(token: viewModel.token!)
         
         viewModel.$photos
             .sink { [weak self] _ in
@@ -107,7 +76,6 @@ class PhotosViewController: UIViewController {
     
 }
 
-
 extension PhotosViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.photos.count
@@ -121,12 +89,9 @@ extension PhotosViewController: UICollectionViewDataSource {
 }
 
 extension PhotosViewController: UICollectionViewDelegate {
-    // Implement any delegate methods if needed
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.photos[indexPath.item]
-        let vc = UIHostingController(rootView: PhotoDetailsView(photosVM: viewModel, photo: photo))
-        vc.title = photo.date.description
+        let vc = PhotoDetailsViewController(viewModel: PhotoDetailsViewModel(photo: photo, allPhotos: viewModel.photos))
         navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import KeychainSwift
 
 protocol LoginViewModelProtocol {
     var token: String? { get set }
@@ -17,16 +18,24 @@ protocol LoginViewModelProtocol {
 
 class LoginViewModel: LoginViewModelProtocol {
     
+    let keychain = KeychainSwift()
+    
     var networkManager = NetworkManager()
     var token: String? = ""
     var isTokenValid: Bool = false
     
     func saveAccessToken(token: String) {
-        UserDefaults.standard.set(token, forKey: "access_token")
+        keychain.set(token, forKey: "com.MobileApp.oauth.token")
     }
-
+    
     func loadAccessToken() -> String? {
-        return UserDefaults.standard.string(forKey: "access_token")
+        if let accessToken = keychain.get("com.MobileApp.oauth.token") {
+            print("Access token: \(accessToken)")
+            return accessToken
+        } else {
+            print("No access token found")
+            return nil
+        }
     }
     
     func testTokenValidity() async -> Bool {

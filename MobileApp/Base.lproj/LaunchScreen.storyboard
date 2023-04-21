@@ -17,9 +17,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lcW-MK-RHB">
-                                <rect key="frame" x="159.33333333333334" y="416" width="74.666666666666657" height="20.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mobile Up Gallery" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ydw-Ci-3t2">
+                                <rect key="frame" x="16" y="408" width="361" height="36"/>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -27,8 +27,10 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="lcW-MK-RHB" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="9K0-YW-reC"/>
-                            <constraint firstItem="lcW-MK-RHB" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="CMh-zr-ik0"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ydw-Ci-3t2" secondAttribute="trailing" constant="16" id="4Jx-5h-GGA"/>
+                            <constraint firstItem="ydw-Ci-3t2" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="UYl-sK-wNd"/>
+                            <constraint firstItem="ydw-Ci-3t2" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="d5T-RG-ciQ"/>
+                            <constraint firstItem="ydw-Ci-3t2" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="uKL-hh-0sF"/>
                         </constraints>
                     </view>
                 </viewController>

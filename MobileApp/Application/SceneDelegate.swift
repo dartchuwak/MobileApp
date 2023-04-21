@@ -9,13 +9,15 @@ import UIKit
 import SwiftUI
 import Network
 
+let appDependency = AppDependency(loginViewModel: LoginViewModel(),
+                                  photosViewModel: PhotosViewModel(networkManager: NetworkManager()),
+                                  networkManager: NetworkManager())
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     let monitor = NWPathMonitor()
-    let appDependency = AppDependency(loginViewModel: LoginViewModel(),
-                                      photosViewModel: PhotosViewModel(networkManager: NetworkManager()),
-                                      networkManager: NetworkManager())
+    
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
@@ -24,19 +26,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         navigationController.setViewControllers([LaunchScreenViewController()], animated: false)
         
         checkInternetConnection { [weak self] isConnected in
-            guard let self = self  else { return }
+//            guard let self = self  else { return }
             if isConnected {
-                if let token = self.appDependency.loginViewModel.loadAccessToken() {
+                if let token = appDependency.loginViewModel.loadAccessToken() {
                     Task {
                         do {
-                            let isValid = try await self.appDependency.networkManager.checkTokenValidity(accessToken: token)
+                            let isValid = try await appDependency.networkManager.checkTokenValidity(accessToken: token)
                             if isValid {
-                                self.appDependency.loginViewModel.token = token
-                                self.appDependency.photosViewModel.token = token
-                                let photosViewController = PhotosViewController(viewModel: (self.appDependency.photosViewModel))
+                                appDependency.loginViewModel.token = token
+                                appDependency.photosViewModel.token = token
+                                let photosViewController = PhotosViewController(viewModel: (appDependency.photosViewModel))
                                 navigationController.setViewControllers([photosViewController], animated: false)
                             } else {
-                                let loginViewController = StartViewController(dep: self.appDependency)
+                                let loginViewController = StartViewController(dep: appDependency)
                                 navigationController.setViewControllers([loginViewController], animated: false)
                             }
                         } catch {
@@ -44,8 +46,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         }
                     }
                 } else {
-                    let loginViewController = StartViewController(dep: self.appDependency)
-                    navigationController.setViewControllers([loginViewController], animated: false)
+                    
+                    DispatchQueue.main.async {
+                        let loginViewController = StartViewController(dep: appDependency)
+                        navigationController.setViewControllers([loginViewController], animated: false)
+                    }
                 }
             } else {
                 let alertController = UIAlertController(title: "No Internet Connection", message: "Please check your internet connection and try again.", preferredStyle: .alert)
