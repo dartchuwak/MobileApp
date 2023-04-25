@@ -8,9 +8,6 @@
 import UIKit
 import Network
 
-//let appDependency = AppDependency(photosViewModel: PhotosViewModel(networkManager: NetworkManager()),
-//                                  networkManager: NetworkManager())
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
@@ -22,8 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowsScene)
-        let navigationController = UINavigationController(rootViewController: LoginViewController(authManager: authManager))
-       // navigationController.setViewControllers([LaunchScreenViewController()], animated: false)
+        let navigationController = UINavigationController(rootViewController: LaunchScreenViewController())
         
         checkInternetConnection { isConnected in
             
@@ -34,20 +30,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     Task {
                         //Проверка токена на валидность
                         let isValid = await self.authManager.testTokenValidity()
-                            if isValid {
-                                DispatchQueue.main.async {
-                                    let photosViewController = PhotosViewController(viewModel: AppDependency.shared.photosViewModel)
-                                    let nav = UINavigationController(rootViewController: photosViewController)
-                                    window.rootViewController = nav
-                                }
-                            } else {
-                                // Если токен не валиден, то открываем стартовый экран для новой авторизации
-                                DispatchQueue.main.async { [weak self] in
-                                    guard let self = self else { return }
-                                    let loginViewController = LoginViewController(authManager: self.authManager)
-                                    window.rootViewController = loginViewController
-                                }
+                        if isValid {
+                            DispatchQueue.main.async {
+                                let photosViewController = PhotosViewController(viewModel: AppDependency.shared.photosViewModel)
+                                let nav = UINavigationController(rootViewController: photosViewController)
+                                window.rootViewController = nav
                             }
+                        } else {
+                            // Если токен не валиден, то открываем стартовый экран для новой авторизации
+                            DispatchQueue.main.async { [weak self] in
+                                guard let self = self else { return }
+                                let loginViewController = LoginViewController(authManager: self.authManager)
+                                window.rootViewController = loginViewController
+                            }
+                        }
                     }
                 } else {
                     //Если токена в keychain нет, то открываем начальный экран
@@ -57,19 +53,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     }
                 }
             } else { // Если сети нет, выкидывем alert
-                let alertController = UIAlertController(title: "No Internet Connection", message: "Please check your internet connection and try again.", preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 DispatchQueue.main.async {
+                    let alertController = UIAlertController(title: NSLocalizedString("alert_network_title", comment: ""), message: NSLocalizedString("alert_network_message", comment: ""), preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    window.rootViewController = navigationController
                     navigationController.present(alertController, animated: true, completion: nil)
                 }
             }
         }
-       // window.rootViewController =  navigationController
         window.makeKeyAndVisible()
         self.window = window
     }
-
-
+    
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

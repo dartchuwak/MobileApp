@@ -16,5 +16,6 @@ class LaunchScreenViewController: UIViewController {
         let launchScreenView = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()?.view
         launchScreenView?.frame = view.bounds
         view.addSubview(launchScreenView!)
+        view.backgroundColor = .systemBackground
     }
 }
