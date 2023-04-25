@@ -2,10 +2,10 @@ import UIKit
 import SwiftUI
 import SDWebImage
 
-class ImageCollectionViewCell: UICollectionViewCell {
+final class ImageCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "ImageCollectionViewCell"
     
-     let imageView: UIImageView = {
+     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill

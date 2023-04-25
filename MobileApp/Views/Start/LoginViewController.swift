@@ -11,7 +11,7 @@ import Combine
 import WebKit
 
 
-class LoginViewController: UIViewController, WKNavigationDelegate {
+final class LoginViewController: UIViewController, WKNavigationDelegate {
     
     private var authManager: AuthManagerProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -64,7 +64,7 @@ class LoginViewController: UIViewController, WKNavigationDelegate {
         ])
     }
     
-    @objc func didPressed() {
+    @objc private func didPressed() {
         let authWebView = WebViewUIKit()
         authWebView.modalPresentationStyle = .fullScreen
         present(authWebView, animated: true)

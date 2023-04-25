@@ -96,7 +96,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
-    func checkInternetConnection(completion: @escaping (Bool) -> Void) {
+    private func checkInternetConnection(completion: @escaping (Bool) -> Void) {
         monitor.pathUpdateHandler = { path in
             if path.status == .satisfied {
                 print("Connected to the Internet")

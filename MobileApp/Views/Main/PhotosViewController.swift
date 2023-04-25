@@ -9,13 +9,13 @@ import Foundation
 import UIKit
 import Combine
 
-class PhotosViewController: UIViewController {
+final class PhotosViewController: UIViewController {
     
-    var viewModel: PhotosViewModel
-    var authManager = AuthManager.shared
+    private var viewModel: PhotosViewModel
+    private var authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     
-    var collectionView: UICollectionView = {
+    private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let itemSize = (UIScreen.main.bounds.width - 3 * 1) / 2
         layout.itemSize = CGSize(width: itemSize, height: itemSize)

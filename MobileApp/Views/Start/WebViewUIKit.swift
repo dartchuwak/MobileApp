@@ -11,10 +11,10 @@ import WebKit
 import Combine
 
 
-class WebViewUIKit: UIViewController, WKNavigationDelegate {
+final class WebViewUIKit: UIViewController, WKNavigationDelegate {
     
     
-    var webView: WKWebView = {
+   private var webView: WKWebView = {
         let webView = WKWebView()
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
@@ -22,18 +22,9 @@ class WebViewUIKit: UIViewController, WKNavigationDelegate {
     
     let tokenSubject = PassthroughSubject<String, Never>()
     
-    
-    deinit {
-        print("DEBUG: WEBVIEW DEINIT")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-      //  clearCache()
         
-       // webView.uiDelegate = self
-     //   webView.allowsBackForwardNavigationGestures = true
-     //   webView.allowsLinkPreview = true
         webView.navigationDelegate = self
         view.addSubview(webView)
         

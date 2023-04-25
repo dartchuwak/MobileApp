@@ -7,14 +7,12 @@
 
 import Foundation
 
-class AppDependency {
+final class AppDependency {
     static let shared = AppDependency()
 
     private(set) lazy var photosViewModel: PhotosViewModel = {
         return PhotosViewModel(networkManager: self.networkManager)
     }()
-    
-    
     
     private(set) lazy var networkManager: NetworkManager = {
         return NetworkManager()

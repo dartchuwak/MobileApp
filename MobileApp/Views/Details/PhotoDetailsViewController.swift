@@ -8,12 +8,12 @@
 import UIKit
 import SDWebImage
 
-class PhotoDetailsViewController: UIViewController {
+final class PhotoDetailsViewController: UIViewController {
     
     var viewModel: PhotoDetailsViewModel
    
     
-    let photo: UIImageView = {
+  private let photo: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -21,7 +21,7 @@ class PhotoDetailsViewController: UIViewController {
         return imageView
     }()
     
-    let collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 2
@@ -74,13 +74,13 @@ class PhotoDetailsViewController: UIViewController {
         ])
     }
     
-    func registerCell() {
+    private func registerCell() {
         collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: "PhotoCell")
         collectionView.dataSource = self
         collectionView.delegate = self
     }
     
-    @objc func share() {
+    @objc private func share() {
         guard let photoURL = URL(string: viewModel.photo.sizes.last?.url ?? "") else { return }
         Task {
             guard let photo = await viewModel.networkManager.loadImage(from: photoURL) else { return }

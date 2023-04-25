@@ -12,12 +12,11 @@ import SDWebImage
 
 class PhotosViewModel: ObservableObject {
 
-    let networkManager: NetworkManagerProtocol
-    let authManager = AuthManager.shared
+    private let networkManager: NetworkManagerProtocol
+    private let authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     @Published var photos: [Photo] = []
     @Published var error: Error?
-    //@Published var allPhotos: [Photo] = []
     
     init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
@@ -40,12 +39,7 @@ class PhotosViewModel: ObservableObject {
     func unixToDate(unixDate: Int) -> Date {
         let date = try! Date(timeIntervalSince1970: TimeInterval(from: unixDate as! Decoder))
         return date
-        
     }
-    
-    
-    
-    
 }
 
 
