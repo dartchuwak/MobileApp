@@ -6,53 +6,57 @@
 //
 
 import UIKit
-import SwiftUI
 import Network
 
-let appDependency = AppDependency(loginViewModel: LoginViewModel(),
-                                  photosViewModel: PhotosViewModel(networkManager: NetworkManager()),
-                                  networkManager: NetworkManager())
+//let appDependency = AppDependency(photosViewModel: PhotosViewModel(networkManager: NetworkManager()),
+//                                  networkManager: NetworkManager())
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     let monitor = NWPathMonitor()
     
+    let authManager = AuthManager.shared
+    
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowsScene)
-        let navigationController = UINavigationController()
-        navigationController.setViewControllers([LaunchScreenViewController()], animated: false)
+        let navigationController = UINavigationController(rootViewController: LoginViewController(authManager: authManager))
+       // navigationController.setViewControllers([LaunchScreenViewController()], animated: false)
         
-        checkInternetConnection { [weak self] isConnected in
-//            guard let self = self  else { return }
-            if isConnected {
-                if let token = appDependency.loginViewModel.loadAccessToken() {
+        checkInternetConnection { isConnected in
+            
+            if isConnected { //Проверка наличия сети
+                
+                //Попытка получения токена из Keychain, если уже авторизировались
+                if self.authManager.loadAccessToken() {
                     Task {
-                        do {
-                            let isValid = try await appDependency.networkManager.checkTokenValidity(accessToken: token)
+                        //Проверка токена на валидность
+                        let isValid = await self.authManager.testTokenValidity()
                             if isValid {
-                                appDependency.loginViewModel.token = token
-                                appDependency.photosViewModel.token = token
-                                let photosViewController = PhotosViewController(viewModel: (appDependency.photosViewModel))
-                                navigationController.setViewControllers([photosViewController], animated: false)
+                                DispatchQueue.main.async {
+                                    let photosViewController = PhotosViewController(viewModel: AppDependency.shared.photosViewModel)
+                                    let nav = UINavigationController(rootViewController: photosViewController)
+                                    window.rootViewController = nav
+                                }
                             } else {
-                                let loginViewController = StartViewController(dep: appDependency)
-                                navigationController.setViewControllers([loginViewController], animated: false)
+                                // Если токен не валиден, то открываем стартовый экран для новой авторизации
+                                DispatchQueue.main.async { [weak self] in
+                                    guard let self = self else { return }
+                                    let loginViewController = LoginViewController(authManager: self.authManager)
+                                    window.rootViewController = loginViewController
+                                }
                             }
-                        } catch {
-                            //Need to catch here smth
-                        }
                     }
                 } else {
-                    
+                    //Если токена в keychain нет, то открываем начальный экран
                     DispatchQueue.main.async {
-                        let loginViewController = StartViewController(dep: appDependency)
-                        navigationController.setViewControllers([loginViewController], animated: false)
+                        let loginViewController = LoginViewController(authManager: self.authManager)
+                        window.rootViewController = loginViewController
                     }
                 }
-            } else {
+            } else { // Если сети нет, выкидывем alert
                 let alertController = UIAlertController(title: "No Internet Connection", message: "Please check your internet connection and try again.", preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 DispatchQueue.main.async {
@@ -60,10 +64,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 }
             }
         }
-        window.rootViewController =  navigationController
+       // window.rootViewController =  navigationController
         window.makeKeyAndVisible()
         self.window = window
     }
+
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

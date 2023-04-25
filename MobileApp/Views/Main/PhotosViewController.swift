@@ -12,6 +12,7 @@ import Combine
 class PhotosViewController: UIViewController {
     
     var viewModel: PhotosViewModel
+    var authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     
     var collectionView: UICollectionView = {
@@ -37,24 +38,29 @@ class PhotosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(collectionView)
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "id")
         collectionView.dataSource = self
         collectionView.delegate = self
-        self.title = "MobileApp Gallery"
-        viewModel.getImages(token: viewModel.token!)
+        self.title = "MobileUp Gallery"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        viewModel.getImagesURL()
         
         viewModel.$photos
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.collectionView.reloadData()
+                guard let self = self else { return }
+                self.collectionView.reloadData()
             }
             .store(in: &cancellables)
         
         viewModel.$error
+            .receive(on: DispatchQueue.main)
             .compactMap { $0 }
             .sink { [weak self] error in
-                self?.showErrorAlert(error)
+                guard let self = self else { return }
+                self.showErrorAlert(error)
             }
             .store(in: &cancellables)
         
@@ -66,6 +72,20 @@ class PhotosViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
+        
+        let exit = UIBarButtonItem(title: "Выход", style: .done, target: self, action:  #selector(exit))
+        navigationItem.rightBarButtonItem = exit
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.label
+    }
+    
+    @objc private func exit() {
+        authManager.deleteAccessToken()
+        let loginViewController = LoginViewController(authManager: authManager)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = loginViewController
+            window.makeKeyAndVisible()
+        }
     }
     
     private func showErrorAlert(_ error: Error) {
@@ -83,7 +103,8 @@ extension PhotosViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "id", for: indexPath) as! ImageCollectionViewCell
-        cell.configure(with: viewModel.photos[indexPath.item])
+        let photo = viewModel.photos[indexPath.item]
+        cell.configure(with: photo)
         return cell
     }
 }
@@ -91,7 +112,8 @@ extension PhotosViewController: UICollectionViewDataSource {
 extension PhotosViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.photos[indexPath.item]
-        let vc = PhotoDetailsViewController(viewModel: PhotoDetailsViewModel(photo: photo, allPhotos: viewModel.photos))
+        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager: AppDependency.shared.networkManager, photo: photo, allPhotos: viewModel.photos)
+        let vc = PhotoDetailsViewController(viewModel: PhotoDetailsVM)
         navigationController?.pushViewController(vc, animated: true)
     }
 }

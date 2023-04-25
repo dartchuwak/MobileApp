@@ -7,59 +7,45 @@
 
 import Foundation
 import Combine
-
+import UIKit
+import SDWebImage
 
 class PhotosViewModel: ObservableObject {
 
     let networkManager: NetworkManagerProtocol
-    var token: String? = nil
+    let authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     @Published var photos: [Photo] = []
     @Published var error: Error?
-    @Published var isTokenValid: Bool?
-    var onInvalidToken: (() -> Void)?
+    //@Published var allPhotos: [Photo] = []
     
     init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
     
-
-    
-    func getImages(token: String) {
-        networkManager.getPhotos(token: token)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    if let networkError = error as? NetworkError {
-                               print("Error: \(networkError.localizedDescription)")
-                           } else {
-                               print("Error: \(error.localizedDescription)")
-                           }
-                    self.error = error
-                }
-            }, receiveValue: { [weak self] response in
-                self?.photos = response.response.items
-            })
-            .store(in: &cancellables)
-
-    }
-    
-    func testTokenValidity() async {
-        do {
-            let isValid = try await networkManager.checkTokenValidity(accessToken: token!)
-            if isValid {
-                print("Токен действителен")
-                self.isTokenValid = true
-            } else {
-                print("Токен недействителен или просрочен")
-                self.isTokenValid = false
+    func getImagesURL() {
+        let token = authManager.token
+        print(token)
+        Task {
+            let result = await networkManager.getImagesURL(token: token)
+            switch result {
+            case .success(let photos):
+                    self.photos = photos
+            case .failure(let error):
+                self.error = error
             }
-        } catch {
-            print("Error: \(error)")
         }
     }
     
+    func unixToDate(unixDate: Int) -> Date {
+        let date = try! Date(timeIntervalSince1970: TimeInterval(from: unixDate as! Decoder))
+        return date
+        
+    }
+    
+    
+    
     
 }
+
+

@@ -11,6 +11,7 @@ import SDWebImage
 class PhotoDetailsViewController: UIViewController {
     
     var viewModel: PhotoDetailsViewModel
+   
     
     let photo: UIImageView = {
         let imageView = UIImageView()
@@ -46,7 +47,8 @@ class PhotoDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         view.addSubview(collectionView)
         registerCell()
         NSLayoutConstraint.activate([
@@ -56,17 +58,19 @@ class PhotoDetailsViewController: UIViewController {
             collectionView.heightAnchor.constraint(equalToConstant: 58)
         ])
         
-        self.title = viewModel.photo.date.description
+        self.title = viewModel.unixToDate(unixDate: viewModel.photo.date)
         view.addSubview(photo)
         photo.sd_setImage(with: URL(string: viewModel.photo.sizes.last?.url ?? ""))
         let shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(share))
         navigationItem.rightBarButtonItem = shareButton
+        navigationController?.navigationBar.tintColor = .label
         
         NSLayoutConstraint.activate([
             photo.widthAnchor.constraint(equalTo: view.widthAnchor),
             photo.heightAnchor.constraint(equalTo: view.widthAnchor),
-            photo.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            photo.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            photo.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            photo.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            photo.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
@@ -78,9 +82,42 @@ class PhotoDetailsViewController: UIViewController {
     
     @objc func share() {
         guard let photoURL = URL(string: viewModel.photo.sizes.last?.url ?? "") else { return }
-        let activityItems: [Any] = [photoURL]
-        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        self.present(activityViewController, animated: true, completion: nil)
+        Task {
+            guard let photo = await viewModel.networkManager.loadImage(from: photoURL) else { return }
+            DispatchQueue.main.async {
+                let activityItems: [Any] = [photo]
+                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                activityViewController.excludedActivityTypes = [
+                    .postToFacebook,
+                    .postToTwitter,
+                    .assignToContact,
+                    .print
+                ]
+                activityViewController.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
+                              if let error = error {
+                                  // Обработка ошибки
+                                  print("Error: \(error.localizedDescription)")
+                                  let alert = UIAlertController(title: "Ошибка сохранения фото", message: "Не удалось сохранить фото", preferredStyle: .alert)
+                                  let okAction = UIAlertAction(title: "OK", style: .default)
+                                  alert.addAction(okAction)
+                                  self.present(alert, animated: true)
+                              } else {
+                                  if completed {
+                                      // Операция завершена успешно
+                                      print("Activity completed: \(activityType?.rawValue ?? "unknown")")
+                                      let alert = UIAlertController(title: "Готово", message: "Фото сохранено в галерею", preferredStyle: .actionSheet)
+                                      let okAction = UIAlertAction(title: "OK", style: .default)
+                                      alert.addAction(okAction)
+                                      self.present(alert, animated: true)
+                                  } else {
+                                      // Операция была отменена пользователем
+                                      print("Activity was cancelled")
+                                  }
+                              }
+                          }
+                self.present(activityViewController, animated: true, completion: nil)
+            }
+        }
     }
 }
 
@@ -92,9 +129,7 @@ extension PhotoDetailsViewController: UICollectionViewDataSource, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCollectionViewCell
         let photo = viewModel.allPhotos[indexPath.item]
-        if let url = URL(string: photo.sizes.last?.url ?? "") {
-            cell.imageView.sd_setImage(with: url)
-        }
+        cell.imageView.sd_setImage(with: URL(string: photo.sizes.last?.url ?? ""))
         return cell
     }
 }

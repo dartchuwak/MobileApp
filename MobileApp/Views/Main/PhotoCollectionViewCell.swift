@@ -5,7 +5,7 @@ import SDWebImage
 class ImageCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "ImageCollectionViewCell"
     
-    private let imageView: UIImageView = {
+     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
