@@ -1,0 +1,10 @@
+/* 
+  Localizable.strings
+  MobileApp
+
+  Created by Evgenii Mikhailov on 26.04.2023.
+  
+*/
+"alert_network_title" = "Ошибка соединения";
+"alert_network_message" = "Пожалуйста, провериьте ваше подключение и попробуйте снова";
+"alert_network_confirm_button" = "Принять";

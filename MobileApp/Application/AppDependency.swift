@@ -6,10 +6,18 @@
 //
 
 import Foundation
-import SwiftUI
 
-struct AppDependency {
-    let loginViewModel: LoginViewModel
-    let photosViewModel: PhotosViewModel
-    let networkManager: NetworkManager
+final class AppDependency {
+    static let shared = AppDependency()
+
+    private(set) lazy var photosViewModel: PhotosViewModel = {
+        return PhotosViewModel(networkManager: self.networkManager)
+    }()
+    
+    private(set) lazy var networkManager: NetworkManager = {
+        return NetworkManager()
+    }()
+    
+    private init() {}
 }
+

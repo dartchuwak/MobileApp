@@ -11,31 +11,38 @@ import WebKit
 import Combine
 
 
-class WebViewUIKit: UIViewController, WKNavigationDelegate {
+final class WebViewUIKit: UIViewController, WKNavigationDelegate {
     
     
-    var webView: WKWebView = {
+   private var webView: WKWebView = {
         let webView = WKWebView()
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
     }()
     
-    let tokenSubject = PassthroughSubject<String, Never>()
+    private var exitButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Выход", for: .normal)
+        button.tintColor = UIColor.label
+        return button
+    }()
     
-  
-    deinit {
-        print("dead")
-    }
+    let tokenSubject = PassthroughSubject<String, Never>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+        view.backgroundColor = .systemBackground
+        exitButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         webView.navigationDelegate = self
         view.addSubview(webView)
+        view.addSubview(exitButton)
+        self.title = "T"
         
-        NSLayoutConstraint.activate([   
-            webView.topAnchor.constraint(equalTo: view.topAnchor),
+        NSLayoutConstraint.activate([
+            exitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            webView.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 16),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -58,9 +65,20 @@ class WebViewUIKit: UIViewController, WKNavigationDelegate {
         webView.load(request)
     }
     
+    func clearCache() {
+        let websiteDataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies])
+        let date = Date(timeIntervalSince1970: 0)
+        WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: date, completionHandler: {})
+    }
+    
+   @objc private func tapped() {
+       self.dismiss(animated: true)
+        
+    }
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
         guard let url = navigationResponse.response.url, url.path == "/blank.html", let fragment = url.fragment else { decisionHandler(.allow); return }
+        print(url)
         let params = fragment.components(separatedBy: "&")
             .map { $0.components(separatedBy: "=") }
             .reduce([String: String]()) { res, param in
@@ -72,8 +90,9 @@ class WebViewUIKit: UIViewController, WKNavigationDelegate {
             }
         
         if let accessToken = params["access_token"] {
+            print("Passing Token \(accessToken)")
             tokenSubject.send(accessToken)
         }
-        decisionHandler(.cancel)
+        decisionHandler(.allow)
     }
 }

@@ -7,16 +7,15 @@
 
 import Foundation
 import UIKit
-import SwiftUI
 import Combine
 
-
-class PhotosViewController: UIViewController {
+final class PhotosViewController: UIViewController {
     
-    var viewModel: PhotosViewModel
+    private var viewModel: PhotosViewModel
+    private var authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     
-    var collectionView: UICollectionView = {
+    private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let itemSize = (UIScreen.main.bounds.width - 3 * 1) / 2
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
@@ -27,19 +26,12 @@ class PhotosViewController: UIViewController {
         return collectionView
     }()
     
+  
+    
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        viewModel.onInvalidToken = { [weak self] in
-                DispatchQueue.main.async {
-                    let authViewController = WebViewUIKit() // Replace with your actual auth view controller
-                    self?.present(authViewController, animated: true, completion: nil)
-                    self?.navigationController?.popViewController(animated: false)
-                }
-            }
     }
-    
-  
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -48,44 +40,29 @@ class PhotosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(collectionView)
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "id")
         collectionView.dataSource = self
         collectionView.delegate = self
-        self.title = "MobileApp Gallery"
-        
-        Task {
-            do {
-                await viewModel.testTokenValidity()
-            }
-        }
-        
-        viewModel.$isTokenValid
-            .sink { [weak self] isValid in
-                guard let isValid = isValid else { return }
-                if isValid {
-                    print ("valid")
-                    self?.viewModel.getImages(token: self?.viewModel.token ?? "")
-                } else {
-                    DispatchQueue.main.async {
-                        print("Not valid")
-                        self?.viewModel.onInvalidToken?()
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        
+        self.title = "MobileUp Gallery"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        viewModel.getImagesURL()
         
         viewModel.$photos
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.collectionView.reloadData()
+                guard let self = self else { return }
+                self.collectionView.reloadData()
             }
             .store(in: &cancellables)
         
         viewModel.$error
+            .receive(on: DispatchQueue.main)
             .compactMap { $0 }
             .sink { [weak self] error in
-                self?.showErrorAlert(error)
+                guard let self = self else { return }
+                self.showErrorAlert(error)
             }
             .store(in: &cancellables)
         
@@ -97,6 +74,20 @@ class PhotosViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
+        
+        let exit = UIBarButtonItem(title: "Выход", style: .done, target: self, action:  #selector(exit))
+        navigationItem.rightBarButtonItem = exit
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.label
+    }
+    
+    @objc private func exit() {
+        authManager.deleteAccessToken()
+        let loginViewController = LoginViewController(authManager: authManager)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = loginViewController
+            window.makeKeyAndVisible()
+        }
     }
     
     private func showErrorAlert(_ error: Error) {
@@ -107,7 +98,6 @@ class PhotosViewController: UIViewController {
     
 }
 
-
 extension PhotosViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.photos.count
@@ -115,18 +105,17 @@ extension PhotosViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "id", for: indexPath) as! ImageCollectionViewCell
-        cell.configure(with: viewModel.photos[indexPath.item])
+        let photo = viewModel.photos[indexPath.item]
+        cell.configure(with: photo)
         return cell
     }
 }
 
 extension PhotosViewController: UICollectionViewDelegate {
-    // Implement any delegate methods if needed
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.photos[indexPath.item]
-        let vc = UIHostingController(rootView: PhotoDetailsView(photosVM: viewModel, photo: photo))
-        vc.title = photo.date.description
+        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager: AppDependency.shared.networkManager, photo: photo, allPhotos: viewModel.photos)
+        let vc = PhotoDetailsViewController(viewModel: PhotoDetailsVM)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
