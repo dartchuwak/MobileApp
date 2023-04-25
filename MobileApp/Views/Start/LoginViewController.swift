@@ -18,7 +18,7 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
     
     private let enterButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Enter VK", for: .normal)
+        button.setTitle("Вход через VK", for: .normal)
         button.setTitleColor(UIColor.systemBackground, for: .normal)
         button.backgroundColor = .label
         button.layer.cornerRadius = 15

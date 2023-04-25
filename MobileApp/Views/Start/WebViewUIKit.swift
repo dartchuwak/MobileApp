@@ -20,16 +20,29 @@ final class WebViewUIKit: UIViewController, WKNavigationDelegate {
         return webView
     }()
     
+    private var exitButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Выход", for: .normal)
+        button.tintColor = UIColor.label
+        return button
+    }()
+    
     let tokenSubject = PassthroughSubject<String, Never>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .systemBackground
+        exitButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         webView.navigationDelegate = self
         view.addSubview(webView)
+        view.addSubview(exitButton)
+        self.title = "T"
         
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            exitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            webView.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 16),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -58,6 +71,10 @@ final class WebViewUIKit: UIViewController, WKNavigationDelegate {
         WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: date, completionHandler: {})
     }
     
+   @objc private func tapped() {
+       self.dismiss(animated: true)
+        
+    }
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
         guard let url = navigationResponse.response.url, url.path == "/blank.html", let fragment = url.fragment else { decisionHandler(.allow); return }

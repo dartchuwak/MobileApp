@@ -26,6 +26,8 @@ final class PhotosViewController: UIViewController {
         return collectionView
     }()
     
+  
+    
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)

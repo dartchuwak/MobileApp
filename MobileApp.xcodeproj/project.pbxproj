@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A34A2C2129F86EB500B260E2 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34A2C2029F86EB500B260E2 /* ProgressView.swift */; };
 		A3BC9ADC29F06F87001390B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9ADB29F06F87001390B3 /* AppDelegate.swift */; };
 		A3BC9ADE29F06F87001390B3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC9ADD29F06F87001390B3 /* SceneDelegate.swift */; };
 		A3BC9AE529F06F88001390B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3BC9AE429F06F88001390B3 /* Assets.xcassets */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A34A2C2029F86EB500B260E2 /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		A3BC9AD829F06F87001390B3 /* MobileApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3BC9ADB29F06F87001390B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A3BC9ADD29F06F87001390B3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -63,6 +65,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A34A2C1F29F86EA300B260E2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A34A2C2029F86EB500B260E2 /* ProgressView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		A3BC9ACF29F06F87001390B3 = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +92,7 @@
 		A3BC9ADA29F06F87001390B3 /* MobileApp */ = {
 			isa = PBXGroup;
 			children = (
+				A34A2C1F29F86EA300B260E2 /* Components */,
 				A3BC9B0929F12615001390B3 /* Application */,
 				A3BC9B0D29F12665001390B3 /* Services */,
 				A3BC9B0C29F1265A001390B3 /* ViewModel */,
@@ -267,6 +278,7 @@
 				A3BC9AF829F07372001390B3 /* NetworkManager.swift in Sources */,
 				A3BC9B2A29F30981001390B3 /* PhotoDetailsViewController.swift in Sources */,
 				A3BC9B1929F15E09001390B3 /* PhotosViewController.swift in Sources */,
+				A34A2C2129F86EB500B260E2 /* ProgressView.swift in Sources */,
 				A3BC9ADE29F06F87001390B3 /* SceneDelegate.swift in Sources */,
 				A3BC9AF629F07350001390B3 /* PhotosViewModel.swift in Sources */,
 			);
