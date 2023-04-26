@@ -25,7 +25,7 @@ final class PhotosViewController: UIViewController {
         return collectionView
     }()
     
-  
+    
     
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
@@ -80,8 +80,8 @@ final class PhotosViewController: UIViewController {
     }
     
     @objc private func exit() {
-        AuthManager.shared.deleteAccessToken()
-        let loginViewController = LoginViewController(authManager: AuthManager.shared)
+        AppDependencyClass.shared.authManager.deleteAccessToken()
+        let loginViewController = LoginViewController(authManager: AppDependencyClass.shared.authManager)
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
             window.rootViewController = loginViewController

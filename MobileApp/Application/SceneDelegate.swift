@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     let monitor = NWPathMonitor()
     
-    let appDependency: AppDependencyClass = AppDependencyClass.configure()
+   // let appDependency: AppDependencyClass = AppDependencyClass.configure()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
@@ -22,8 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Task {
             let isConnected = await checkInternetConnection()
             if isConnected {
-                if appDependency.authManager.loadAccessToken() {
-                    let isValid = await appDependency.authManager.testTokenValidity()
+                if AppDependencyClass.shared.authManager.loadAccessToken() {
+                    let isValid = await AppDependencyClass.shared.authManager.testTokenValidity()
                     if isValid {
                         setAuthorizedRootViewController(window: window)
                     } else {
@@ -43,7 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func setAuthorizedRootViewController(window: UIWindow) {
         DispatchQueue.main.async {
-            let photosViewController = PhotosViewController(viewModel: self.appDependency.photosViewModel)
+            let photosViewController = PhotosViewController(viewModel: AppDependencyClass.shared.photosViewModel)
             let nav = UINavigationController(rootViewController: photosViewController)
             window.rootViewController = nav
         }
@@ -51,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func setUnauthorizedRootViewController(window: UIWindow) {
         DispatchQueue.main.async {
-            let loginViewController = LoginViewController(authManager: self.appDependency.authManager)
+            let loginViewController = LoginViewController(authManager: AppDependencyClass.shared.authManager)
             window.rootViewController = loginViewController
         }
     }
