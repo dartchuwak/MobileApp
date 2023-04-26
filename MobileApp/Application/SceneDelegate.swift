@@ -13,58 +13,73 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     let monitor = NWPathMonitor()
     
-    let authManager = AuthManager.shared
-    
+    let appDependency: AppDependencyClass = AppDependencyClass.configure()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowsScene)
-        let navigationController = UINavigationController(rootViewController: LaunchScreenViewController())
         
-        checkInternetConnection { isConnected in
-            
-            if isConnected { //Проверка наличия сети
-                
-                //Попытка получения токена из Keychain, если уже авторизировались
-                if self.authManager.loadAccessToken() {
-                    Task {
-                        //Проверка токена на валидность
-                        let isValid = await self.authManager.testTokenValidity()
-                        if isValid {
-                            DispatchQueue.main.async {
-                                let photosViewController = PhotosViewController(viewModel: AppDependency.shared.photosViewModel)
-                                let nav = UINavigationController(rootViewController: photosViewController)
-                                window.rootViewController = nav
-                            }
-                        } else {
-                            // Если токен не валиден, то открываем стартовый экран для новой авторизации
-                            DispatchQueue.main.async { [weak self] in
-                                guard let self = self else { return }
-                                let loginViewController = LoginViewController(authManager: self.authManager)
-                                window.rootViewController = loginViewController
-                            }
-                        }
+        Task {
+            let isConnected = await checkInternetConnection()
+            if isConnected {
+                if appDependency.authManager.loadAccessToken() {
+                    let isValid = await appDependency.authManager.testTokenValidity()
+                    if isValid {
+                        setAuthorizedRootViewController(window: window)
+                    } else {
+                        setUnauthorizedRootViewController(window: window)
                     }
                 } else {
-                    //Если токена в keychain нет, то открываем начальный экран
-                    DispatchQueue.main.async {
-                        let loginViewController = LoginViewController(authManager: self.authManager)
-                        window.rootViewController = loginViewController
-                    }
+                    setUnauthorizedRootViewController(window: window)
                 }
-            } else { // Если сети нет, выкидывем alert
-                DispatchQueue.main.async {
-                    let alertController = UIAlertController(title: NSLocalizedString("alert_network_title", comment: ""), message: NSLocalizedString("alert_network_message", comment: ""), preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    window.rootViewController = navigationController
-                    navigationController.present(alertController, animated: true, completion: nil)
-                }
+            } else {
+                showNoInternetConnectionAlert(window: window)
             }
         }
+        
         window.makeKeyAndVisible()
         self.window = window
     }
     
+    private func setAuthorizedRootViewController(window: UIWindow) {
+        DispatchQueue.main.async {
+            let photosViewController = PhotosViewController(viewModel: self.appDependency.photosViewModel)
+            let nav = UINavigationController(rootViewController: photosViewController)
+            window.rootViewController = nav
+        }
+    }
+    
+    private func setUnauthorizedRootViewController(window: UIWindow) {
+        DispatchQueue.main.async {
+            let loginViewController = LoginViewController(authManager: self.appDependency.authManager)
+            window.rootViewController = loginViewController
+        }
+    }
+    
+    private func showNoInternetConnectionAlert(window: UIWindow) {
+        DispatchQueue.main.async {
+            let navigationController = UINavigationController(rootViewController: LaunchScreenViewController())
+            let alertController = UIAlertController(title: NSLocalizedString("alert_network_title", comment: ""), message: NSLocalizedString("alert_network_message", comment: ""), preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            window.rootViewController = navigationController
+            navigationController.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    private func checkInternetConnection() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            monitor.pathUpdateHandler = { path in
+                if path.status == .satisfied {
+                    print("Connected to the Internet")
+                    continuation.resume(returning: true)
+                } else {
+                    continuation.resume(returning: false)
+                }
+            }
+            let queue = DispatchQueue(label: "Monitor")
+            monitor.start(queue: queue)
+        }
+    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
@@ -91,25 +106,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-    private func checkInternetConnection(completion: @escaping (Bool) -> Void) {
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                print("Connected to the Internet")
-                completion(true)
-            } else {
-                completion(false)
-            }
-        }
-        
-        let queue = DispatchQueue(label: "Monitor")
-        monitor.start(queue: queue)
-    }
 }
-
-
-
-
-
-
-

@@ -36,7 +36,7 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
         return label
     }()
     
-    init(authManager: AuthManager) {
+    init(authManager: AuthManagerProtocol) {
         self.authManager = authManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -76,7 +76,7 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
                 self?.authManager.saveAccessToken(token: token)
                 
                 DispatchQueue.main.async {
-                    let photosVM = PhotosViewModel(networkManager: AppDependency.shared.networkManager)
+                    let photosVM = PhotosViewModel(networkManager: NetworkManager(), authManager: self!.authManager)
                     let photosVC = PhotosViewController(viewModel: photosVM)
                     let navController = UINavigationController(rootViewController: photosVC)
                     
