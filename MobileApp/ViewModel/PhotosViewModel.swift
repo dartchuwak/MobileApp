@@ -10,10 +10,12 @@ import Combine
 import UIKit
 import SDWebImage
 
+
+
 class PhotosViewModel: ObservableObject {
     
-    private let networkManager: NetworkManagerProtocol
-    private let authManager: AuthManagerProtocol
+    private var networkManager: NetworkManagerProtocol
+    private var authManager: AuthManagerProtocol
     private var cancellables = Set<AnyCancellable>()
     @Published var photos: [Photo] = []
     @Published var error: Error?
