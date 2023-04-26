@@ -13,8 +13,6 @@ import UIKit
 final class PhotoDetailsViewModel {
     
     let networkManager: NetworkManagerProtocol
-   // private var authManager = AuthManager.shared
-    
     var photo: Photo
     var allPhotos: [Photo] = []
     

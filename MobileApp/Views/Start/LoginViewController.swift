@@ -14,6 +14,7 @@ import WebKit
 final class LoginViewController: UIViewController, WKNavigationDelegate {
     
     private var authManager: AuthManagerProtocol
+    
     private var cancellables = Set<AnyCancellable>()
     
     private let enterButton: UIButton = {
@@ -88,8 +89,6 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
                     authWebView.clearCache()
                     authWebView.dismiss(animated: false)
                     self?.transitionToPhotosViewController()
-                    
-                    
                 }
             }
             .store(in: &cancellables)

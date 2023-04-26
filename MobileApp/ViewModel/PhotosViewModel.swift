@@ -10,11 +10,13 @@ import Combine
 import UIKit
 import SDWebImage
 
-class PhotosViewModel: ObservableObject {
 
-     let networkManager: NetworkManagerProtocol
-     let authManager: AuthManagerProtocol
-     var cancellables = Set<AnyCancellable>()
+
+class PhotosViewModel: ObservableObject {
+    
+    private var networkManager: NetworkManagerProtocol
+    private var authManager: AuthManagerProtocol
+    private var cancellables = Set<AnyCancellable>()
     @Published var photos: [Photo] = []
     @Published var error: Error?
     
@@ -30,7 +32,7 @@ class PhotosViewModel: ObservableObject {
             let result = await networkManager.getImagesURL(token: token)
             switch result {
             case .success(let photos):
-                    self.photos = photos
+                self.photos = photos
             case .failure(let error):
                 self.error = error
             }

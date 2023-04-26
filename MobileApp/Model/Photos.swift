@@ -20,7 +20,6 @@ struct Photo: Decodable,Hashable,Identifiable {
     let id: Int
     let sizes: [Size]
     let date: Int
-    
 }
 
 struct Size: Decodable, Hashable {

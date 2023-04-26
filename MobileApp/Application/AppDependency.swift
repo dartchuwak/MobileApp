@@ -10,23 +10,25 @@ import Foundation
 class AppDependencyClass {
     
     static let shared = AppDependencyClass()
-    
-//    init(photosViewModel: PhotosViewModel, networkManager: NetworkManagerProtocol, authManager: AuthManagerProtocol) {
-//        self.photosViewModel = photosViewModel
-//        self.networkManager = networkManager
-//        self.authManager = authManager
-//    }
-    
-    
+    private init(){}
     private (set) lazy var networkManager: NetworkManagerProtocol = NetworkManager()
-    private (set) lazy var authManager: AuthManagerProtocol = AuthManager()
+    private (set) lazy var authManager: AuthManagerProtocol = AuthManager(networkManager: networkManager)
     private (set) lazy var photosViewModel = PhotosViewModel(networkManager: networkManager, authManager: authManager)
-    ///private (set) lazy var networkManager: NetworkManagerProtocol = NetworkManager()
+
+}
+
+class AppDependency {
     
-//    static func configure() -> AppDependencyClass {
-//        let networkManager = NetworkManager()
-//        let authManager = AuthManager.shared
-//        let photosViewModel = PhotosViewModel(networkManager: networkManager, authManager: authManager)
-//        return AppDependencyClass(photosViewModel: photosViewModel, networkManager: networkManager, authManager: authManager)
-//    }
+}
+
+class AppDependencyContainer {
+    let authManager: AuthManagerProtocol
+    let photosViewModel: PhotosViewModel
+    let networkManager: NetworkManagerProtocol
+    
+    init(networkManager: NetworkManagerProtocol, authManager: AuthManagerProtocol, photosViewModel: PhotosViewModel) {
+        self.authManager = authManager
+        self.photosViewModel = photosViewModel
+        self.networkManager = networkManager
+    }
 }
