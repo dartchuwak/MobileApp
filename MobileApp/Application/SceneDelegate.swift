@@ -34,7 +34,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 showNoInternetConnectionAlert(window: window)
             }
         }
-        
         window.makeKeyAndVisible()
         self.window = window
     }
