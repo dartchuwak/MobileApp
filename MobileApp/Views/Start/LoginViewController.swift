@@ -36,7 +36,7 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
         return label
     }()
     
-    init(authManager: AuthManager) {
+    init(authManager: AuthManagerProtocol) {
         self.authManager = authManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -56,12 +56,22 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 170),
             titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -124),
-           titleLabel.bottomAnchor.constraint(equalTo: enterButton.topAnchor, constant: -442),
+            titleLabel.bottomAnchor.constraint(equalTo: enterButton.topAnchor, constant: -442),
             enterButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             enterButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             enterButton.heightAnchor.constraint(equalToConstant: 52),
             enterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -42)
         ])
+    }
+    
+    private func transitionToPhotosViewController() {
+        let photosVC = PhotosViewController(viewModel: AppDependencyClass.shared.photosViewModel)
+        let navController = UINavigationController(rootViewController: photosVC)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = navController
+            window.makeKeyAndVisible()
+        }
     }
     
     @objc private func didPressed() {
@@ -74,25 +84,14 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
                 print("Getting Token")
                 self?.authManager.token = token
                 self?.authManager.saveAccessToken(token: token)
-                
                 DispatchQueue.main.async {
-                    let photosVM = PhotosViewModel(networkManager: AppDependency.shared.networkManager)
-                    let photosVC = PhotosViewController(viewModel: photosVM)
-                    let navController = UINavigationController(rootViewController: photosVC)
+                    authWebView.clearCache()
+                    authWebView.dismiss(animated: false)
+                    self?.transitionToPhotosViewController()
                     
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let window = windowScene.windows.first {
-                        authWebView.clearCache()
-                        authWebView.dismiss(animated: false)
-                        window.rootViewController = navController
-                        window.makeKeyAndVisible()
-                        
-                    }
+                    
                 }
             }
             .store(in: &cancellables)
-        
-        
-        
     }
 }

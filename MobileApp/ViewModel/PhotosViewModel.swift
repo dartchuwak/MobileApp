@@ -12,14 +12,15 @@ import SDWebImage
 
 class PhotosViewModel: ObservableObject {
 
-    private let networkManager: NetworkManagerProtocol
-    private let authManager = AuthManager.shared
-    private var cancellables = Set<AnyCancellable>()
+     let networkManager: NetworkManagerProtocol
+     let authManager: AuthManagerProtocol
+     var cancellables = Set<AnyCancellable>()
     @Published var photos: [Photo] = []
     @Published var error: Error?
     
-    init(networkManager: NetworkManagerProtocol) {
+    init(networkManager: NetworkManagerProtocol, authManager: AuthManagerProtocol) {
         self.networkManager = networkManager
+        self.authManager = authManager
     }
     
     func getImagesURL() {

@@ -10,3 +10,7 @@
 "alert_network_title" = "Connection Error";
 "alert_network_message" = "Please, check your network connection";
 "alert_network_confirm_button" = "Confirm";
+
+"alert_save_picture_title" = "Connection Error";
+"alert_save_picture_title_message" = "Please, check your network connection";
+"alert_save_picture_title_confirm_button" = "Confirm";

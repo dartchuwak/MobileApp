@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftUI
 import KeychainSwift
 
 protocol AuthManagerProtocol {
@@ -19,9 +18,8 @@ protocol AuthManagerProtocol {
 
 final class AuthManager: AuthManagerProtocol {
     
-    static let shared = AuthManager()
-    
-    private init() {}
+//    static let shared = AuthManager()
+//    private init() {}
     
     private let keychain = KeychainSwift()
     private let networkManager = NetworkManager()

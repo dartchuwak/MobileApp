@@ -1,5 +1,4 @@
 import UIKit
-import SwiftUI
 import SDWebImage
 
 final class ImageCollectionViewCell: UICollectionViewCell {

@@ -12,7 +12,6 @@ import Combine
 final class PhotosViewController: UIViewController {
     
     private var viewModel: PhotosViewModel
-    private var authManager = AuthManager.shared
     private var cancellables = Set<AnyCancellable>()
     
     private var collectionView: UICollectionView = {
@@ -26,7 +25,7 @@ final class PhotosViewController: UIViewController {
         return collectionView
     }()
     
-  
+    
     
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
@@ -81,8 +80,8 @@ final class PhotosViewController: UIViewController {
     }
     
     @objc private func exit() {
-        authManager.deleteAccessToken()
-        let loginViewController = LoginViewController(authManager: authManager)
+        AppDependencyClass.shared.authManager.deleteAccessToken()
+        let loginViewController = LoginViewController(authManager: AppDependencyClass.shared.authManager)
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first {
             window.rootViewController = loginViewController
@@ -114,7 +113,7 @@ extension PhotosViewController: UICollectionViewDataSource {
 extension PhotosViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.photos[indexPath.item]
-        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager: AppDependency.shared.networkManager, photo: photo, allPhotos: viewModel.photos)
+        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager: NetworkManager(), photo: photo, allPhotos: viewModel.photos)
         let vc = PhotoDetailsViewController(viewModel: PhotoDetailsVM)
         navigationController?.pushViewController(vc, animated: true)
     }
