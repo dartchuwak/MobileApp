@@ -13,8 +13,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     let monitor = NWPathMonitor()
     
-   // let appDependency: AppDependencyClass = AppDependencyClass.configure()
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowsScene)
@@ -43,7 +41,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func setAuthorizedRootViewController(window: UIWindow) {
         DispatchQueue.main.async {
-            let photosViewController = PhotosViewController(viewModel: AppDependencyClass.shared.photosViewModel)
+            let viewModel = AppDependencyClass.shared.photosViewModel
+            let photosViewController = PhotosViewController(viewModel: viewModel)
             let nav = UINavigationController(rootViewController: photosViewController)
             window.rootViewController = nav
         }
@@ -51,7 +50,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func setUnauthorizedRootViewController(window: UIWindow) {
         DispatchQueue.main.async {
-            let loginViewController = LoginViewController(authManager: AppDependencyClass.shared.authManager)
+            let authManager = AppDependencyClass.shared.authManager
+            let loginViewController = LoginViewController(authManager: authManager)
             window.rootViewController = loginViewController
         }
     }

@@ -25,8 +25,6 @@ final class PhotosViewController: UIViewController {
         return collectionView
     }()
     
-    
-    
     init(viewModel: PhotosViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -73,7 +71,6 @@ final class PhotosViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
-        
         let exit = UIBarButtonItem(title: "Выход", style: .done, target: self, action:  #selector(exit))
         navigationItem.rightBarButtonItem = exit
         navigationItem.rightBarButtonItem?.tintColor = UIColor.label
@@ -113,7 +110,7 @@ extension PhotosViewController: UICollectionViewDataSource {
 extension PhotosViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.photos[indexPath.item]
-        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager: NetworkManager(), photo: photo, allPhotos: viewModel.photos)
+        let PhotoDetailsVM = PhotoDetailsViewModel(networkManager:  AppDependencyClass.shared.networkManager, photo: photo, allPhotos: viewModel.photos)
         let vc = PhotoDetailsViewController(viewModel: PhotoDetailsVM)
         navigationController?.pushViewController(vc, animated: true)
     }

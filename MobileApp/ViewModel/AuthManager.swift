@@ -17,12 +17,14 @@ protocol AuthManagerProtocol {
 }
 
 final class AuthManager: AuthManagerProtocol {
-    
-//    static let shared = AuthManager()
-//    private init() {}
-    
+        
     private let keychain = KeychainSwift()
-    private let networkManager = NetworkManager()
+    private let networkManager: NetworkManagerProtocol
+    
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
+    }
+    
     
     var token: String = ""
     
@@ -58,9 +60,9 @@ final class AuthManager: AuthManagerProtocol {
     }
     
     func deleteAccessToken() {
-        print("Токен удален из Keychain")
         token = ""
         keychain.delete("com.MobileApp.oauth.token")
+        print("Токен удален из Keychain")
         
     }
     

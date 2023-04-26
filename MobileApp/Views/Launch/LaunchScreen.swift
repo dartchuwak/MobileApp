@@ -11,11 +11,9 @@ import UIKit
 class LaunchScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Загрузите Launch Screen из вашего файла storyboard или создайте его вручную
-        let launchScreenView = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()?.view
-        launchScreenView?.frame = view.bounds
-        view.addSubview(launchScreenView!)
+        guard let launchScreenView = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()?.view else { return}
+        launchScreenView.frame = view.bounds
+        view.addSubview(launchScreenView)
         view.backgroundColor = .systemBackground
     }
 }
