@@ -8,3 +8,13 @@
 "alert_network_title" = "Ошибка соединения";
 "alert_network_message" = "Пожалуйста, провериьте ваше подключение и попробуйте снова";
 "alert_network_confirm_button" = "Принять";
+
+
+"alert_save_picture_title" = "Успех";
+"alert_save_picture_message" = "Изображение сохранено";
+"alert_save_picture_confirm" = "Закрыть";
+
+"alert_save_picture_error_title" = "Ошибка";
+"alert_save_picture_error_message" = "Изображение не сохранено";
+"alert_save_picture_error_confirm" = "Close";
+

@@ -58,8 +58,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func showNoInternetConnectionAlert(window: UIWindow) {
         DispatchQueue.main.async {
             let navigationController = UINavigationController(rootViewController: LaunchScreenViewController())
-            let alertController = UIAlertController(title: NSLocalizedString("alert_network_title", comment: ""), message: NSLocalizedString("alert_network_message", comment: ""), preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            let alertController = UIAlertController(title: NSLocalizedString("alert_network_title", comment: ""),
+                                                    message: NSLocalizedString("alert_network_message", comment: ""), preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("alert_network_confirm", comment: ""), style: .default, handler: nil))
             window.rootViewController = navigationController
             navigationController.present(alertController, animated: true, completion: nil)
         }

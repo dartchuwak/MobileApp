@@ -102,17 +102,19 @@ final class PhotoDetailsViewController: UIViewController {
                 activityViewController.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
                               if let error = error {
                                   // Обработка ошибки
-                                  print("Error: \(error.localizedDescription)")
-                                  let alert = UIAlertController(title: "Ошибка сохранения фото", message: "Не удалось сохранить фото", preferredStyle: .alert)
-                                  let okAction = UIAlertAction(title: "OK", style: .default)
+                                  let alert = UIAlertController(title: NSLocalizedString("alert_save_picture_error_title", comment: ""),
+                                                                message: "\(NSLocalizedString("alert_save_picture_error_message", comment: "")) \(error)",
+                                                                preferredStyle: .alert)
+                                  let okAction = UIAlertAction(title: NSLocalizedString("alert_save_picture_error_confirm", comment: ""), style: .default)
                                   alert.addAction(okAction)
                                   self.present(alert, animated: true)
                               } else {
                                   if completed {
                                       // Операция завершена успешно
-                                      print("Activity completed: \(activityType?.rawValue ?? "unknown")")
-                                      let alert = UIAlertController(title: "Готово", message: "Фото сохранено в галерею", preferredStyle: .actionSheet)
-                                      let okAction = UIAlertAction(title: "OK", style: .default)
+                                      let alert = UIAlertController(title: NSLocalizedString("alert_save_picture_title", comment: ""),
+                                                                    message: NSLocalizedString("alert_save_picture_message", comment: ""),
+                                                                    preferredStyle: .actionSheet)
+                                      let okAction = UIAlertAction(title: NSLocalizedString("alert_save_picture_confirm", comment: ""), style: .default)
                                       alert.addAction(okAction)
                                       self.present(alert, animated: true)
                                   } else {

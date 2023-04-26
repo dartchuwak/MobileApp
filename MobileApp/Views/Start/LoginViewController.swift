@@ -82,7 +82,6 @@ final class LoginViewController: UIViewController, WKNavigationDelegate {
         
         authWebView.tokenSubject
             .sink { [weak self] token in
-                print("Getting Token")
                 self?.authManager.token = token
                 self?.authManager.saveAccessToken(token: token)
                 DispatchQueue.main.async {

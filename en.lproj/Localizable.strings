@@ -9,8 +9,12 @@
 
 "alert_network_title" = "Connection Error";
 "alert_network_message" = "Please, check your network connection";
-"alert_network_confirm_button" = "Confirm";
+"alert_network_confirm" = "Confirm";
 
-"alert_save_picture_title" = "Connection Error";
-"alert_save_picture_title_message" = "Please, check your network connection";
-"alert_save_picture_title_confirm_button" = "Confirm";
+"alert_save_picture_title" = "Success";
+"alert_save_picture_message" = "Picture saved";
+"alert_save_picture_confirm" = "Close";
+
+"alert_save_picture_error_title" = "Failed";
+"alert_save_picture_error_message" = "Picture doesn't saved";
+"alert_save_picture_error_confirm" = "Close";

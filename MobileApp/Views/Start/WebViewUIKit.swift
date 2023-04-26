@@ -89,7 +89,6 @@ final class WebViewUIKit: UIViewController, WKNavigationDelegate {
             }
         
         if let accessToken = params["access_token"] {
-            print("Passing Token \(accessToken)")
             tokenSubject.send(accessToken)
         }
         decisionHandler(.allow)

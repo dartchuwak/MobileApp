@@ -27,7 +27,6 @@ class PhotosViewModel: ObservableObject {
     
     func getImagesURL() {
         let token = authManager.token
-        print(token)
         Task {
             let result = await networkManager.getImagesURL(token: token)
             switch result {
